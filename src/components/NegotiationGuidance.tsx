@@ -17,7 +17,7 @@ const tips: NegotiationTip[] = [
     category: "Payment Terms",
     icon: TrendingUp,
     title: "Counter the 90-Day Payment Delay",
-    script: '"Industry standard for freelance contracts is Net-30. I'd be comfortable proceeding with Net-30 payment terms. For projects over $500, I require a 50% deposit upfront. This is standard practice and I'm happy to provide references from other clients who've agreed to these terms."',
+    script: "Industry standard for freelance contracts is Net-30. I'd be comfortable proceeding with Net-30 payment terms. For projects over $500, I require a 50% deposit upfront. This is standard practice and I'm happy to provide references from other clients who've agreed to these terms.",
     leverage: "Net-30 is the legal standard in most jurisdictions. Longer delays may violate wage payment laws.",
     outcome: "Payment within 30 days, 50% deposit on large projects",
   },
@@ -26,7 +26,7 @@ const tips: NegotiationTip[] = [
     category: "IP Rights",
     icon: Shield,
     title: "Limit Intellectual Property Transfer",
-    script: '"I can assign IP for work specifically created under this contract, but I retain rights to pre-existing tools, frameworks, and any work created independently. I'd like to add: \'Contractor retains ownership of all pre-existing intellectual property and general know-how.\'"',
+    script: "I can assign IP for work specifically created under this contract, but I retain rights to pre-existing tools, frameworks, and any work created independently. I'd like to add: 'Contractor retains ownership of all pre-existing intellectual property and general know-how.'",
     leverage: "Blanket IP assignment of work done 'outside hours' is legally unenforceable in many states.",
     outcome: "IP limited to deliverables, not background knowledge",
   },
@@ -35,7 +35,7 @@ const tips: NegotiationTip[] = [
     category: "Non-Compete",
     icon: Scale,
     title: "Narrow the Non-Compete Scope",
-    script: '"A 3-year, 500-mile non-compete is overly broad and likely unenforceable. I'd agree to a 6-month non-solicitation of your direct clients only. I need to remain able to work in my field to sustain my livelihood."',
+    script: "A 3-year, 500-mile non-compete is overly broad and likely unenforceable. I'd agree to a 6-month non-solicitation of your direct clients only. I need to remain able to work in my field to sustain my livelihood.",
     leverage: "Courts frequently void overly broad non-competes. Several states (CA, ND, OK) ban them entirely.",
     outcome: "6-month non-solicitation only, no geographic restriction",
   },
@@ -44,7 +44,7 @@ const tips: NegotiationTip[] = [
     category: "Arbitration",
     icon: MessageSquare,
     title: "Remove One-Sided Arbitration Costs",
-    script: '"I'm open to arbitration but need costs shared equally, or capped at $500 for me. I'd also like to preserve the right to small claims court for disputes under $10,000. One-sided cost arrangements discourage legitimate claims."',
+    script: "I'm open to arbitration but need costs shared equally, or capped at $500 for me. I'd also like to preserve the right to small claims court for disputes under $10,000. One-sided cost arrangements discourage legitimate claims.",
     leverage: "Forcing all arbitration costs on the weaker party may be deemed unconscionable by courts.",
     outcome: "Equal cost-sharing, small claims court preserved",
   },
@@ -66,7 +66,7 @@ const NegotiationGuidance = () => {
           <MessageSquare className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Negotiation Playbook</h2>
+          <h2 className="text-2xl font-bold" style={{ fontFamily: "Space Grotesk, sans-serif" }}>Negotiation Playbook</h2>
           <p className="text-sm text-muted-foreground">Evidence-based scripts for each flagged clause</p>
         </div>
       </div>
@@ -87,7 +87,6 @@ const NegotiationGuidance = () => {
                   </div>
                 </div>
 
-                {/* Script */}
                 <div className="relative bg-background/60 rounded-lg p-4 border border-border/40 mb-3">
                   <p className="text-sm text-foreground/80 leading-relaxed italic pr-8">{tip.script}</p>
                   <button
