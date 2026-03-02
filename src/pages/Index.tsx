@@ -172,6 +172,7 @@ const Index = () => {
               criticalCount={result.clauses.filter(c => c.risk === "critical").length}
               highCount={result.clauses.filter(c => c.risk === "high").length}
               contractLength={contractLength}
+              clauses={result.clauses}
             />
           </div>
 

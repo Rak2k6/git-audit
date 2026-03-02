@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { Upload, FileText, ArrowRight, Loader2, AlertTriangle, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { extractTextFromPdf } from "@/lib/pdfUtils";
 
 const SAMPLE_CONTRACT = `FREELANCE SERVICE AGREEMENT
 
@@ -28,12 +29,33 @@ interface ContractAnalyzerProps {
 const ContractAnalyzer = ({ onAnalysis, isAnalyzing }: ContractAnalyzerProps) => {
   const [text, setText] = useState("");
   const [dragOver, setDragOver] = useState(false);
+  const [fileLoading, setFileLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => setText(e.target?.result as string);
-    reader.readAsText(file);
+  const handleFile = async (file: File) => {
+    const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+
+    if (isPdf) {
+      setFileLoading(true);
+      try {
+        const extracted = await extractTextFromPdf(file);
+        if (extracted.trim().length === 0) {
+          setText("[Could not extract text from this PDF. It may be a scanned image. Please paste the contract text manually.]");
+        } else {
+          setText(extracted);
+        }
+      } catch (err) {
+        console.error("PDF extraction failed:", err);
+        setText("[Error reading PDF. Please try pasting the contract text instead.]");
+      } finally {
+        setFileLoading(false);
+      }
+    } else {
+      // Plain text / .txt files
+      const reader = new FileReader();
+      reader.onload = (e) => setText(e.target?.result as string);
+      reader.readAsText(file);
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -67,10 +89,14 @@ const ContractAnalyzer = ({ onAnalysis, isAnalyzing }: ContractAnalyzerProps) =>
             onClick={() => fileRef.current?.click()}
           >
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${dragOver ? 'bg-primary/30 border-primary' : 'bg-secondary border-border/60'} border`}>
-              <Upload className={`w-5 h-5 ${dragOver ? 'text-primary' : 'text-muted-foreground'}`} />
+              {fileLoading ? (
+                <Loader2 className="w-5 h-5 text-primary animate-spin" />
+              ) : (
+                <Upload className={`w-5 h-5 ${dragOver ? 'text-primary' : 'text-muted-foreground'}`} />
+              )}
             </div>
             <div>
-              <p className="font-medium text-sm">Drop file here or click to upload</p>
+              <p className="font-medium text-sm">{fileLoading ? 'Extracting text from PDF...' : 'Drop file here or click to upload'}</p>
               <p className="text-xs text-muted-foreground mt-0.5">TXT, PDF up to 10MB</p>
             </div>
             <input ref={fileRef} type="file" accept=".txt,.pdf" className="hidden" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />

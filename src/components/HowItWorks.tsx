@@ -11,7 +11,7 @@ const steps = [
     icon: Brain,
     number: "02",
     title: "Risk Classification",
-    description: "Each clause is classified against a training set of 50,000+ gig contracts and FLSA/labor law benchmarks to assign risk scores.",
+    description: "Each clause is classified against a training set of gig contracts and FLSA/labor law benchmarks to assign risk scores.",
   },
   {
     icon: BarChart3,

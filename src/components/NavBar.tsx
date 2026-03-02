@@ -17,23 +17,6 @@ const NavBar = () => {
             <span className="text-foreground">Audit</span>
           </span>
         </div>
-
-        <div className="hidden md:flex items-center gap-8">
-          {["Features", "How it Works", "Pricing", "About"].map((item) => (
-            <a key={item} href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200">
-              {item}
-            </a>
-          ))}
-        </div>
-
-        <div className="hidden md:flex items-center gap-3">
-          <Button variant="ghost" className="text-muted-foreground hover:text-primary">Sign In</Button>
-          <Button className="bg-primary text-primary-foreground hover:bg-primary/90 glow-cyan font-semibold gap-2">
-            <Zap className="w-4 h-4" />
-            Analyze Contract
-          </Button>
-        </div>
-
         <button className="md:hidden text-muted-foreground" onClick={() => setOpen(!open)}>
           {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>

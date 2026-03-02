@@ -42,8 +42,8 @@ const HeroSection = ({ onAnalyze }: { onAnalyze: () => void }) => {
           </h1>
 
           <p className="text-xl text-muted-foreground max-w-2xl mb-10 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-            Our NLP engine scans digital job contracts to detect wage discrepancies, 
-            hidden clauses, and exploitative terms — then guides you through evidence-based 
+            Our NLP engine scans digital job contracts to detect wage discrepancies,
+            hidden clauses, and exploitative terms — then guides you through evidence-based
             negotiation strategies.
           </p>
 
@@ -55,12 +55,7 @@ const HeroSection = ({ onAnalyze }: { onAnalyze: () => void }) => {
               Analyze Your Contract
               <ArrowRight className="w-5 h-5" />
             </Button>
-            <Button
-              variant="outline"
-              className="border-border/60 text-foreground hover:border-primary/60 hover:bg-primary/5 text-base px-8 py-6"
-            >
-              View Sample Report
-            </Button>
+
           </div>
 
           {/* Trust signals */}
