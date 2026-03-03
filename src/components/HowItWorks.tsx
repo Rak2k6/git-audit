@@ -4,20 +4,20 @@ const steps = [
   {
     icon: Search,
     number: "01",
-    title: "NLP Clause Extraction",
-    description: "Our model tokenizes and parses every clause, identifying legal patterns like payment terms, IP transfers, non-competes, and arbitration waivers.",
+    title: "Clause Extraction & Categorization",
+    description: "The Auditor parses raw contract text using NLP to identify key clauses — payment terms, IP rights, termination rules, arbitration, non-competes, and more.",
   },
   {
     icon: Brain,
     number: "02",
-    title: "Risk Classification",
-    description: "Each clause is classified against a training set of gig contracts and FLSA/labor law benchmarks to assign risk scores.",
+    title: "Advocate vs Skeptic Reasoning",
+    description: "Two internal AI perspectives simulate a legal debate. This ensures balanced, bias-resistant analysis.",
   },
   {
     icon: BarChart3,
     number: "03",
-    title: "Wage Benchmarking",
-    description: "Compensation terms are compared against BLS data, Glassdoor averages, and regional wage standards to detect underpayment.",
+    title: "Scoring, Verdict & Negotiation Strategy",
+    description: "The Judge evaluates the debate, assigns fairness and risk scores, and delivers Overall contract rating. A final verdict you can act on confidently.",
   },
   {
     icon: FileCheck,
@@ -36,10 +36,10 @@ const HowItWorks = () => {
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-4" style={{ fontFamily: "Space Grotesk, sans-serif" }}>
-            How the AI Works
+            Meet the 3-Agent AI Council
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            A 4-stage pipeline processes your contract from raw text to actionable intelligence in seconds.
+            An intelligent contract auditing system where three AI agents — Auditor, Advocate, and Judge — collaborate to analyze gig contracts and protect worker fairness in seconds.
           </p>
         </div>
 
