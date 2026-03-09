@@ -17,7 +17,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from llm_client import FAST_MODEL, LARGE_MODEL, call_llm
+from backend.llm_client import FAST_MODEL, LARGE_MODEL, call_llm
 
 # ── Category definitions shared across agents ────────────────────────────────
 CATEGORIES = ["payment", "termination", "non_compete", "ip", "dispute", "compensation"]

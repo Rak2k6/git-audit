@@ -15,7 +15,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
 
-from council_service import run_council
+from backend.council_service import run_council
 
 # ── App setup ────────────────────────────────────────────────────────────────
 app = FastAPI(
