@@ -31,7 +31,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173", 
         "https://gig-audit-council.onrender.com",  # Vite default
-        "https://gig-audit.vercel.app"
+        "https://gig-audit.vercel.app",
         "http://localhost:8080",   # Vite alternate port
         "http://localhost:3000",
         "http://127.0.0.1:5173",
