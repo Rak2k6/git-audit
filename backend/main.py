@@ -9,7 +9,17 @@ Run locally:
 
 Environment:
     GROQ_API_KEY=<your_key>   (required)
+    REDIS_URL=redis://...     (optional — caching disabled if absent)
+
+Changes from v1.0:
+    - analyze_contract() is now async to support the Map-Reduce pipeline's
+      asyncio.gather() concurrency in services/pipeline.py.
+    - Added structured logging configuration.
+    - All Pydantic models and the /analyze response shape are UNCHANGED —
+      the React frontend requires zero modifications.
 """
+
+import logging
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,11 +27,24 @@ from pydantic import BaseModel, field_validator
 
 from council_service import run_council
 
-# ── App setup ────────────────────────────────────────────────────────────────
+# ── Logging setup ─────────────────────────────────────────────────────────────
+# Configure structured logging at startup.  In production, swap the format
+# for a JSON formatter and ship logs to your aggregation platform.
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
+    datefmt="%Y-%m-%dT%H:%M:%S",
+)
+logger = logging.getLogger(__name__)
+
+# ── App setup ─────────────────────────────────────────────────────────────────
 app = FastAPI(
     title="Fair Gig Guardian API",
-    description="3-Agent AI Council for contract fairness analysis",
-    version="1.0.0",
+    description=(
+        "3-Agent AI Council for contract fairness analysis. "
+        "Supports adaptive Map-Reduce pipeline for long contracts."
+    ),
+    version="2.0.0",
 )
 
 # Allow the React dev server (any localhost port) and production origin.
@@ -43,6 +66,8 @@ app.add_middleware(
 
 
 # ── Request / Response models ─────────────────────────────────────────────────
+# These models are UNCHANGED from v1.0.  The frontend sees the same API surface.
+
 class AnalyzeRequest(BaseModel):
     contract_text: str
 
@@ -72,36 +97,45 @@ class RiskyClause(BaseModel):
 
 
 class AnalyzeResponse(BaseModel):
-    overall_score:    int
-    category_scores:  CategoryScores
-    verdict:          str
-    risky_clauses:    list[RiskyClause]
+    overall_score:   int
+    category_scores: CategoryScores
+    verdict:         str
+    risky_clauses:   list[RiskyClause]
 
 
-# ── Routes ───────────────────────────────────────────────────────────────────
+# ── Routes ────────────────────────────────────────────────────────────────────
+
 @app.get("/", tags=["Health"])
 def health_check():
     """Quick liveness probe."""
-    return {"status": "ok", "service": "Fair Gig Guardian API"}
+    return {"status": "ok", "service": "Fair Gig Guardian API", "version": "2.0.0"}
 
 
 @app.post("/analyze", response_model=AnalyzeResponse, tags=["Analysis"])
-def analyze_contract(body: AnalyzeRequest) -> AnalyzeResponse:
+async def analyze_contract(body: AnalyzeRequest) -> AnalyzeResponse:
     """
-    Run the 3-Agent AI Council on the provided contract text.
+    Run the GigAudit AI Council on the provided contract text.
 
     - **contract_text**: The raw text of the gig contract (≥ 50 chars).
 
+    For short contracts (≤ 6 000 tokens) the pipeline runs a single Auditor
+    call.  For longer contracts it automatically switches to the Map-Reduce
+    chunked pipeline with parallel Auditor agents and semantic deduplication.
+
     Returns a structured fairness analysis with scores, verdict, and
-    per-clause negotiation guidance.
+    per-clause negotiation guidance.  The response shape is identical to v1.0.
     """
+    logger.info(
+        "[main] /analyze request received — contract length: %d chars.",
+        len(body.contract_text),
+    )
     try:
-        result = run_council(body.contract_text)
+        result = await run_council(body.contract_text)
     except EnvironmentError as exc:
         # GROQ_API_KEY missing
         raise HTTPException(status_code=500, detail=str(exc))
     except Exception as exc:
-        print(f"[main] Unexpected error: {exc}")
+        logger.exception("[main] Unexpected error during analysis: %s", exc)
         raise HTTPException(
             status_code=500,
             detail="Analysis failed. Please try again or contact support.",

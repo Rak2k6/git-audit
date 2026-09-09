@@ -8,13 +8,14 @@ All agents in the council use this module to call LLMs.
 import json
 import os
 import re
+import time
 from typing import Any
 
 from groq import Groq
 
 # ── Model aliases used across the codebase ──────────────────────────────────
-LARGE_MODEL = "llama-3.3-70b-versatile"   # Auditor & Judge
-FAST_MODEL  = "llama-3.1-8b-instant"       # Debate
+LARGE_MODEL = "openai/gpt-oss-20b"   # Auditor & Judge
+FAST_MODEL  = "openai/gpt-oss-120b"       # Debate
 
 
 def _get_client() -> Groq:
@@ -53,35 +54,48 @@ def call_llm(
           "Do not include markdown, code fences, or any text outside the JSON object."
     )
 
-    try:
-        response = client.chat.completions.create(
-            model=model,
-            temperature=temperature,
-            messages=[
-                {"role": "system", "content": full_system},
-                {"role": "user",   "content": user_prompt},
-            ],
-        )
-    except Exception as exc:
-        print(f"[llm_client] Groq API error: {exc}")
-        return {}
-
-    raw = response.choices[0].message.content or ""
-
-    # ── Attempt 1: direct parse ──────────────────────────────────────────────
-    try:
-        return json.loads(raw)
-    except json.JSONDecodeError:
-        pass
-
-    # ── Attempt 2: extract first {...} block (handles markdown fences) ────────
-    match = re.search(r"\{[\s\S]*\}", raw)
-    if match:
+    last_error = "unknown error"
+    for attempt in range(2):
         try:
-            return json.loads(match.group())
+            request_options: dict[str, Any] = {
+                "model": model,
+                "temperature": temperature,
+                "max_tokens": 4096,
+                "messages": [
+                    {"role": "system", "content": full_system},
+                    {"role": "user",   "content": user_prompt},
+                ],
+            }
+            # Some Groq model/prompt combinations reject JSON mode with a
+            # 400 before generation. Retry once using the prompt-only format.
+            if attempt == 0:
+                request_options["response_format"] = {"type": "json_object"}
+            response = client.chat.completions.create(**request_options)
+        except Exception as exc:
+            last_error = f"Groq API request failed: {exc}"
+            if attempt == 0:
+                time.sleep(0.5)
+                continue
+            raise RuntimeError(last_error) from exc
+
+        raw = response.choices[0].message.content or ""
+
+        # ── Attempt 1: direct parse ──────────────────────────────────────────
+        try:
+            return json.loads(raw)
         except json.JSONDecodeError:
             pass
 
-    # ── Fallback: log and return empty dict ──────────────────────────────────
-    print(f"[llm_client] Failed to parse JSON from model output:\n{raw[:500]}")
-    return {}
+        # ── Attempt 2: extract first {...} block (handles markdown fences) ───
+        match = re.search(r"\{[\s\S]*\}", raw)
+        if match:
+            try:
+                return json.loads(match.group())
+            except json.JSONDecodeError:
+                pass
+
+        last_error = "Groq returned an empty or invalid JSON response"
+        if attempt == 0:
+            time.sleep(0.5)
+
+    raise RuntimeError(last_error)

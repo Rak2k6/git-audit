@@ -2,3 +2,15 @@ groq>=0.13.0
 fastapi>=0.115.0
 uvicorn[standard]>=0.32.0
 pydantic>=2.0.0
+
+# Token counting — falls back to word×1.3 if not installed
+tiktoken>=0.7.0
+
+# Semantic deduplication in the merge stage (ENABLE_SEMANTIC_DEDUP=true)
+# Downloads all-MiniLM-L6-v2 model (~80 MB) on first use, cached in ~/.cache/huggingface
+# Set ENABLE_SEMANTIC_DEDUP=false in .env to skip the model download
+sentence-transformers>=3.0.0
+numpy>=1.26.0
+
+# Optional result caching — pipeline degrades gracefully if Redis is unavailable
+redis>=5.0.0
