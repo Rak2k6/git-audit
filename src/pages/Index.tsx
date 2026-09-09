@@ -11,7 +11,7 @@ import HowItWorks from "@/components/HowItWorks";
 // ── Backend URL ─────────────────────────────────────────────────────────────
 // In development this points to the local FastAPI server.
 // For production, replace with your deployed API URL or set via env var.
-const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_URL ?? "https://gig-audit-council.onrender.com";
 
 // ── API response types (mirror backend Pydantic models) ─────────────────────
 interface CategoryScores {

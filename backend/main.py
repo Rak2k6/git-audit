@@ -25,7 +25,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
 
-from council_service import run_council
+from backend.council_service import run_council
 
 # ── Logging setup ─────────────────────────────────────────────────────────────
 # Configure structured logging at startup.  In production, swap the format
@@ -52,7 +52,9 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",   # Vite default
+        "http://localhost:5173", 
+        "https://gig-audit-council.onrender.com",  # Vite default
+        "https://gig-audit.vercel.app",
         "http://localhost:8080",   # Vite alternate port
         "http://localhost:3000",
         "http://127.0.0.1:5173",
